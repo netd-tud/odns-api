@@ -1,0 +1,6 @@
+@ODNSAPI_HostAddress = http://localhost:5204
+
+GET {{ODNSAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
