@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODNSRepository", "ODNSRepos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityLib", "SecurityLib\SecurityLib.csproj", "{86688E4A-842C-4523-BC7A-984F62F1C368}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityEntities", "SecurityEntities\SecurityEntities.csproj", "{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{86688E4A-842C-4523-BC7A-984F62F1C368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86688E4A-842C-4523-BC7A-984F62F1C368}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86688E4A-842C-4523-BC7A-984F62F1C368}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
