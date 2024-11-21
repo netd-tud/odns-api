@@ -25,11 +25,11 @@ namespace ODNSRepository.Repository
         //private Queue<NpgsqlBatchCommand> commandQueue = new Queue<NpgsqlBatchCommand>();
         //private bool isBatchSent = false;
 
-        /*private JsonSerializerOptions option= new()
+        private JsonSerializerOptions options= new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
-        */
+        
 
         public OdnsPostgresqlRepository(IConfiguration config, ILogger<OdnsPostgresqlRepository> logger)
         {
@@ -55,8 +55,8 @@ namespace ODNSRepository.Repository
 
                 using (cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    //cmd.Parameters.AddWithValue("p_input", NpgsqlTypes.NpgsqlDbType.Json, JsonSerializer.Serialize<TInput>(input,options));
-                    cmd.Parameters.AddWithValue("p_input", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonSerializer.Serialize<TInput>(input));
+                    cmd.Parameters.AddWithValue("p_input", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonSerializer.Serialize<TInput>(input,options));
+                    //cmd.Parameters.AddWithValue("p_input", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonSerializer.Serialize<TInput>(input));
                     await cmd.PrepareAsync();
 
                     object? rawResult = await cmd.ExecuteScalarAsync();

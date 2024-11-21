@@ -9,6 +9,6 @@ namespace Entities.ODNS.Response
     public class MetaData
     {
         public long total {  get; set; }
-        public int next_page { get; set; }
+        //public int next_page { get; set; }
     }
 }

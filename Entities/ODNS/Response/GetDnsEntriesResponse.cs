@@ -9,6 +9,6 @@ namespace Entities.ODNS.Response
     public class GetDnsEntriesResponse : StatusCode
     {
         public MetaData? metaData {  get; set; }
-        public List<DnsEntry> DnsEntries { get; set; } = new List<DnsEntry>();
+        public List<DnsEntry> dnsEntries { get; set; } = new List<DnsEntry>();
     }
 }
