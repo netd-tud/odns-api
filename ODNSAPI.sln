@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityLib", "SecurityLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityEntities", "SecurityEntities\SecurityEntities.csproj", "{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityRepository", "SecurityRepository\SecurityRepository.csproj", "{8E5632B6-8A87-49A4-AA3A-3ADF010E7357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55CB1AD2-DB26-4B16-9FD9-12DF0C02FBB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E5632B6-8A87-49A4-AA3A-3ADF010E7357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E5632B6-8A87-49A4-AA3A-3ADF010E7357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E5632B6-8A87-49A4-AA3A-3ADF010E7357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E5632B6-8A87-49A4-AA3A-3ADF010E7357}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
