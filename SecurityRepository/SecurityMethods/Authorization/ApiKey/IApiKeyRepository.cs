@@ -11,5 +11,6 @@ namespace SecurityRepository.SecurityMethods.Authorization.ApiKey
     public interface IApiKeyRepository
     {
         Task<TokenRequestResponse> requestToken(TokenRequest tokenRequest);
+        Task<TokenInspectResponse> inspectToken(TokenInspectRequest request);
     }
 }

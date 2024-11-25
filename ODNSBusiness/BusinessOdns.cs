@@ -42,6 +42,7 @@ namespace ODNSBusiness
             {
                 response.statusCode.code = -1;
                 response.statusCode.message = "Error please try again later";
+                _logger.LogError($"Error occured while executing {nameof(this.GetDnsEntries)}\n ex: {ex.ToString()}");
             }
             return response;
         }

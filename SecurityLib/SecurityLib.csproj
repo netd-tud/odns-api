@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
@@ -15,6 +17,11 @@
   <ItemGroup>
     <ProjectReference Include="..\SecurityEntities\SecurityEntities.csproj" />
     <ProjectReference Include="..\SecurityRepository\SecurityRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\Authorization\" />
+    <Folder Include="Filters\Authorization\" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,7 @@ using NLog.Web;
 using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
+using SecurityLib.Filters;
 
 try
 {
@@ -36,7 +37,11 @@ try
     builder.Services.AddTransient<IOdnsRepositoryFactory,OdnsRepositoryFactory>();
     builder.Services.AddSingleton<IOdnsRepository,OdnsPostgresqlRepository>();
     builder.Services.AddSingleton<IBusinessOdns, BusinessOdns>();
-    
+
+    #endregion
+
+    #region Auth
+    builder.Services.AddScoped<ApiKeyAuthFilter>();
     #endregion
 
     #region Logger

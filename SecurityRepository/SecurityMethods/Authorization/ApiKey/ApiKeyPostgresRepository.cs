@@ -84,7 +84,28 @@ namespace SecurityRepository.SecurityMethods.Authorization.ApiKey
 
         public async Task<TokenRequestResponse> requestToken(TokenRequest tokenRequest)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TokenRequestResponse result = await QueryDB<TokenRequest, TokenRequestResponse>(tokenRequest, _config["Database:Functions:RequestToken"]);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<TokenInspectResponse> inspectToken(TokenInspectRequest request)
+        {
+            try
+            {
+                TokenInspectResponse result = await QueryDB<TokenInspectRequest, TokenInspectResponse>(request, _config["Database:Functions:InspectToken"]);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

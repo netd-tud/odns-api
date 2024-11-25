@@ -8,6 +8,7 @@ namespace SecurityEntities.Request
 {
     public class TokenRequest
     {
+        public string? rid {  get; set; } = Guid.NewGuid().ToString();
         public string affiliate_email {  get; set; }
         public string organization_name { get; set; }
         public string? personofcontact_name { get; set; }

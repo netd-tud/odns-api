@@ -3,6 +3,7 @@ using Entities.ODNS.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ODNSBusiness;
+using SecurityLib.Filters;
 
 namespace ODNSAPI.Controllers
 {
@@ -20,6 +21,7 @@ namespace ODNSAPI.Controllers
 
         [EnableRateLimiting("fixed")]
         [HttpPost(Name = "GetDnsEntries")]
+        [ServiceFilter(typeof(ApiKeyAuthFilter))]
         public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
         {
             GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);

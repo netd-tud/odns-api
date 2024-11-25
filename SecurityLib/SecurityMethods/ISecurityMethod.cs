@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SecurityEntities.Request;
+using SecurityEntities.Response;
 
 namespace SecurityLib.SecurityMethods
 {
     public interface ISecurityMethod
     {
-        Task<string> requestToken(string tokenRequest);
-        Task<string> revokeToken(string revokRequest);
-        Task<string> inspect(string inspectRequest);
-
+        Task<TokenRequestResponse> requestToken(TokenRequest request);
+        Task<TokenInspectResponse> inspect(TokenInspectRequest request);
     }
 }
