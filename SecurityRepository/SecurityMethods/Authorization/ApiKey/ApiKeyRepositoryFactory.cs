@@ -10,7 +10,7 @@ namespace SecurityRepository.SecurityMethods.Authorization.ApiKey
     {
         IApiKeyRepository GetInstance(string token);
     }
-    public class ApiKeyRepositoryFactory
+    public class ApiKeyRepositoryFactory: IApiKeyRepositoryFactory
     {
         private readonly IEnumerable<IApiKeyRepository> _services;
 

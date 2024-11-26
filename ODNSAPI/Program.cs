@@ -6,6 +6,7 @@ using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
 using SecurityLib.Filters;
+using SecurityRepository.SecurityMethods.Authorization.ApiKey;
 
 try
 {
@@ -40,8 +41,11 @@ try
 
     #endregion
 
-    #region Auth
+    #region Authorization
+    builder.Services.AddTransient<IApiKeyRepositoryFactory, ApiKeyRepositoryFactory>();
+    builder.Services.AddSingleton<IApiKeyRepository, ApiKeyPostgresRepository>();
     builder.Services.AddScoped<ApiKeyAuthFilter>();
+
     #endregion
 
     #region Logger

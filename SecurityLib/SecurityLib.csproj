@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Attributes\Authorization\" />
     <Folder Include="Filters\Authorization\" />
+    <Folder Include="Middleware\Authorization\" />
   </ItemGroup>
 
 </Project>
