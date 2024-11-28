@@ -12,8 +12,4 @@
     <None Remove="Security\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\" />
-  </ItemGroup>
-
 </Project>
