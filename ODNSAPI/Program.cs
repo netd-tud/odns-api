@@ -73,8 +73,13 @@ try
     // Configure the HTTP request pipeline.
     if (enableSwagger)
     {
+        string apiVersion = builder.Configuration.GetValue<string>("Settings:DocsVersion");
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"ODNSAPI {apiVersion}");
+            c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
+        });
     }
 
     //app.UseHttpsRedirection();
