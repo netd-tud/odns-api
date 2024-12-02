@@ -31,7 +31,7 @@ namespace ODNSBusiness
 
         public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
         {
-            _logger.LogDebug($"GetDnsEntries called rid: {request.rid} with the following request:\n {JsonSerializer.Serialize(request)}");
+            _logger.LogInformation($"GetDnsEntries called rid: {request.rid} with the following request:\n {JsonSerializer.Serialize(request)}");
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
             try
             {
