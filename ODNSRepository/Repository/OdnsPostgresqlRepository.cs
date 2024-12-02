@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Entities.DTO.Request;
+using Entities.DTO.Response;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +30,7 @@ namespace ODNSRepository.Repository
         private JsonSerializerOptions options= new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+
         };
         
 
@@ -86,8 +89,17 @@ namespace ODNSRepository.Repository
         {
             try
             {
-                GetDnsEntriesResponse result = await QueryDB<GetDnsEntriesRequest, GetDnsEntriesResponse>(request, _config["Database:Functions:GetDnsEntries"]);
-                return result;
+                DnsEntryFilterDTO dtoFilter = new DnsEntryFilterDTO(request.filter);
+                GetDnsEntriesRequestDTO dtoRequest = new GetDnsEntriesRequestDTO()
+                {
+                    filter = dtoFilter,
+                    pagination = request.pagination,
+                    sort = request.sort,
+                    rid = request.rid
+                };
+                GetDnsEntriesResponseDTO result = await QueryDB<GetDnsEntriesRequestDTO, GetDnsEntriesResponseDTO>(dtoRequest, _config["Database:Functions:GetDnsEntries"]);
+                GetDnsEntriesResponse finalResult = result.GetDisplayResponse();
+                return finalResult;
             }
             catch (Exception ex)
             {
