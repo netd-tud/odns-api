@@ -1,4 +1,5 @@
 
+using System.Reflection;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using NLog.Web;
@@ -28,6 +29,7 @@ try
     builder.Services.AddSwaggerGen(c =>
     {
         c.EnableAnnotations();
+        c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
     });
 
 
