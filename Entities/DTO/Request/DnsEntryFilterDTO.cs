@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Entities.Enums;
 using Entities.ODNS.Request;
 
 namespace Entities.DTO.Request
@@ -32,13 +33,13 @@ namespace Entities.DTO.Request
 
         public DnsEntryFilterDTO(DnsEntryFilter parent)
         {
-            this.protocol = parent.protocol;
+            this.protocol = EProtocolValues.Get(parent.protocol);
             this.ip_request = parent.ip_request;
             this.ip_response = parent.ip_response;
             this.a_record = parent.a_record;
             this.timestamp_request = parent.timestamp_request;
             this.timestamp_response = parent.timestamp_response;
-            this.response_type = parent.response_type;
+            this.response_type = EResponseTypeValues.Get(parent.response_type);
             this.country_request = parent.country_request;
             this.country_response = parent.country_response;
             this.asn_request = parent.asn_request;
