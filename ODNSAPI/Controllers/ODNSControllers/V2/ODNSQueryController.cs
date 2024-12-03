@@ -1,13 +1,16 @@
-﻿using Entities.ODNS.Request;
+﻿using Asp.Versioning;
+using Entities.ODNS.Request;
 using Entities.ODNS.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ODNSBusiness;
 
-namespace ODNSAPI.Controllers
+namespace ODNSAPI.Controllers.ODNSControllers.V2
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/v{version:apiVersion}/[controller]/[action]")]
+    //[Route("[controller]/[action]")]
+    [ApiVersion("2.0")]
     public class ODNSQueryController : ControllerBase
     {
         private readonly ILogger<ODNSQueryController> _logger;
@@ -47,7 +50,7 @@ namespace ODNSAPI.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [EnableRateLimiting("fixed")]
-        [HttpPost(Name = "GetDnsEntries")]
+        [HttpPost]
         public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
         {
             GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);

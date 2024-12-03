@@ -1,11 +1,15 @@
 
 using System.Reflection;
 using System.Threading.RateLimiting;
+using Asp.Versioning;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 using NLog.Web;
+using ODNSAPI.Swagger;
 using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 try
 {
@@ -26,12 +30,25 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
     builder.Services.AddSwaggerGen(c =>
     {
+        c.OperationFilter<SwaggerDefaultValues>();
         c.EnableAnnotations();
         c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
     });
 
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    })
+        .AddApiExplorer(options =>
+        {
+            options.SubstituteApiVersionInUrl = true;
+        });
 
     #region services
 
@@ -75,12 +92,23 @@ try
     // Configure the HTTP request pipeline.
     if (enableSwagger)
     {
-        string apiVersion = builder.Configuration.GetValue<string>("Settings:DocsVersion");
+        //string apiVersion = builder.Configuration.GetValue<string>("Settings:DocsVersion");
         app.UseSwagger();
+        //app.UseSwaggerUI();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"ODNSAPI {apiVersion}");
-            c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
+            var descriptions = app.DescribeApiVersions();
+
+            // build a swagger endpoint for each discovered API version
+            foreach (var description in descriptions)
+            {
+                var url = $"/swagger/{description.ApiVersion}/swagger.json";
+                var name = description.GroupName.ToUpperInvariant();
+                c.SwaggerEndpoint(url, name);
+                c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
+            }
+            //c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"ODNSAPI {apiVersion}");
+            //c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
         });
     }
 
