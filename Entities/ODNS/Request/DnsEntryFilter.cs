@@ -10,8 +10,7 @@ namespace Entities.ODNS.Request
 {
     public class DnsEntryFilter
     {
-        
-        public string? protocol {  get; set; }
+        public EProtocol? protocol {  get; set; }
         [JsonPropertyName("QueriedIP")]
         public string? ip_request { get; set; }
         [JsonPropertyName("ReplyingIP")]
@@ -21,7 +20,7 @@ namespace Entities.ODNS.Request
         public string? timestamp_request { get; set; }
         public string? timestamp_response { get; set; }
         [JsonPropertyName("ResolverType")]
-        public string? response_type { get; set; }
+        public EResponseType? response_type { get; set; }
         [JsonPropertyName("QueriedIP_Country")]
         public string? country_request { get; set; }
         [JsonPropertyName("ReplyingIP_Country")]
