@@ -17,6 +17,21 @@ try
     #region RateLimiting
     builder.Services.AddRateLimiter(o =>
     {
+        /*o.AddPolicy(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), context =>
+        {
+            
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: context.Request.Headers.TryGetValue("X-Forwarded-For", out var ip) ? ip[0] : context.Connection.RemoteIpAddress?.ToString(),
+                factory: _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = builder.Configuration.GetValue<int>("RateLimiting:PermitLimit"),
+                    Window = TimeSpan.FromSeconds(builder.Configuration.GetValue<int>("RateLimiting:WindowInSeconds")),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = builder.Configuration.GetValue<int>("RateLimiting:QueueLimit"),
+                    AutoReplenishment = true
+                }
+            );
+        });*/
         o.AddFixedWindowLimiter(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), options =>
         {
             options.PermitLimit = builder.Configuration.GetValue<int>("RateLimiting:PermitLimit");
@@ -28,8 +43,9 @@ try
         o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         o.OnRejected = async (ctx, cancelationToken) =>
         {
+            //bool hasForwarded = ctx.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var ip);
             //ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-            await ctx.HttpContext.Response.WriteAsync("Too many requests", cancelationToken);
+            await ctx.HttpContext.Response.WriteAsync($"Too many requests", cancelationToken);
             //return;
         };
     });
