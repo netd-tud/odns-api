@@ -8,7 +8,6 @@ namespace ODNSAPI.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    //[EnableRateLimiting("fixed")]
     public class ODNSQueryController : ControllerBase
     {
         private readonly ILogger<ODNSQueryController> _logger;
