@@ -1,7 +1,9 @@
 
+using System.Net;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 using NLog.Web;
 using ODNSBusiness;
 using ODNSRepository;
@@ -11,8 +13,31 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     bool enableSwagger = builder.Configuration.GetValue<bool>("Settings:EnableSwagger");
+
+    #region RateLimiting
+    builder.Services.AddRateLimiter(o =>
+    {
+        o.AddFixedWindowLimiter(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), options =>
+        {
+            options.PermitLimit = builder.Configuration.GetValue<int>("RateLimiting:PermitLimit");
+            options.Window = TimeSpan.FromSeconds(builder.Configuration.GetValue<int>("RateLimiting:WindowInSeconds"));
+            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            options.QueueLimit = builder.Configuration.GetValue<int>("RateLimiting:QueueLimit");
+            options.AutoReplenishment = true;
+        });
+        o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        o.OnRejected = async (ctx, cancelationToken) =>
+        {
+            //ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            await ctx.HttpContext.Response.WriteAsync("Too many requests", cancelationToken);
+            //return;
+        };
+    });
+
+    #endregion
+
     // Add services to the container.
-    
+
     builder.Services.AddControllers();
 
     if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -47,28 +72,7 @@ try
     builder.Host.UseNLog();
     #endregion
 
-    #region RateLimiting
-    builder.Services.AddRateLimiter(_ =>
-    {
-        _.AddFixedWindowLimiter(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), options =>
-        {
-            options.PermitLimit = builder.Configuration.GetValue<int>("RateLimiting:PermitLimit");
-            options.Window = TimeSpan.FromSeconds(builder.Configuration.GetValue<int>("RateLimiting:WindowInSeconds"));
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = builder.Configuration.GetValue<int>("RateLimiting:QueueLimit");
-        });
-        _.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-        _.OnRejected = async (ctx, cancelationToken) =>
-        {
-            ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-            return;
-
-        };
-    }
-
-    );
-
-    #endregion
+    
 
     var app = builder.Build();
 
@@ -86,15 +90,11 @@ try
 
     //app.UseHttpsRedirection();
 
-    
-
+    app.UseRouting();
+    app.UseRateLimiter();
     app.UseAuthorization();
 
     app.MapControllers();
-
-    app.UseRouting();
-    app.UseRateLimiter();
-
     app.Run();
 }
 catch(Exception ex)
