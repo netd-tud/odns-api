@@ -35,6 +35,7 @@ namespace ODNSBusiness
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
             try
             {
+                request.fixSortField();
                 response = await _dnsRepository.GetDnsEntries(request);
                 _logger.LogDebug($"GetDnsEntries response for rid: {request.rid}\n {JsonSerializer.Serialize(response)}");
             }

@@ -37,7 +37,7 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
         ///        },
         ///        "filter": {
         ///          "protocol": "tcp",
-        ///          "BackendResolver_Country": "USA"
+        ///          "backend_resolver_country": "USA"
         ///        },
         ///          "sort": {
         ///            "field": "timestamp_request",
