@@ -17,7 +17,7 @@ try
     #region RateLimiting
     builder.Services.AddRateLimiter(o =>
     {
-        /*o.AddPolicy(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), context =>
+        o.AddPolicy(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), context =>
         {
             
             return RateLimitPartition.GetFixedWindowLimiter(
@@ -31,21 +31,22 @@ try
                     AutoReplenishment = true
                 }
             );
-        });*/
-        o.AddFixedWindowLimiter(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), options =>
+        });
+        /*o.AddFixedWindowLimiter(policyName: builder.Configuration.GetValue<string>("RateLimiting:PolicyName"), options =>
         {
             options.PermitLimit = builder.Configuration.GetValue<int>("RateLimiting:PermitLimit");
             options.Window = TimeSpan.FromSeconds(builder.Configuration.GetValue<int>("RateLimiting:WindowInSeconds"));
             options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
             options.QueueLimit = builder.Configuration.GetValue<int>("RateLimiting:QueueLimit");
             options.AutoReplenishment = true;
-        });
+        });*/
         o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         o.OnRejected = async (ctx, cancelationToken) =>
         {
-            //bool hasForwarded = ctx.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var ip);
+            bool hasForwarded = ctx.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var ip);
             //ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-            await ctx.HttpContext.Response.WriteAsync($"Too many requests", cancelationToken);
+            string? text = " for " + ( hasForwarded ? ip[0] : ctx.HttpContext.Connection.RemoteIpAddress?.ToString() );
+            await ctx.HttpContext.Response.WriteAsync($"Too many requests {text}", cancelationToken);
             //return;
         };
     });
