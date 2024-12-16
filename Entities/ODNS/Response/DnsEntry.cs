@@ -33,36 +33,36 @@ namespace Entities.ODNS.Response
         */
 
         public string? protocol { get; set; }
-        [JsonPropertyName("QueriedIP")]
+        [JsonPropertyName("queried_ip")]
         public string? ip_request { get; set; }
-        [JsonPropertyName("ReplyingIP")]
+        [JsonPropertyName("replying_ip")]
         public string? ip_response { get; set; }
-        [JsonPropertyName("BackendResolver")]
+        [JsonPropertyName("backend_resolver")]
         public string? a_record { get; set; }
         public string? timestamp_request { get; set; }
         public string? timestamp_response { get; set; }
-        [JsonPropertyName("ResolverType")]
+        [JsonPropertyName("resolver_type")]
         public string? response_type { get; set; }
-        [JsonPropertyName("QueriedIP_Country")]
+        [JsonPropertyName("queried_ip_country")]
         public string? country_request { get; set; }
-        [JsonPropertyName("ReplyingIP_Country")]
+        [JsonPropertyName("replying_ip_country")]
         public string? country_response { get; set; }
-        [JsonPropertyName("QueriedIP_ASN")]
+        [JsonPropertyName("queried_ip_asn")]
         public int? asn_request { get; set; }
-        [JsonPropertyName("ReplyingIP_ASN")]
+        [JsonPropertyName("replying_ip_asn")]
         public int? asn_response { get; set; }
         public string? prefix_request { get; set; }
         public string? prefix_response { get; set; }
-        [JsonPropertyName("QueriedIP_Org")]
+        [JsonPropertyName("queried_ip_org")]
         public string? org_request { get; set; }
-        [JsonPropertyName("ReplyingIP_Org")]
+        [JsonPropertyName("replying_ip_org")]
         public string? org_response { get; set; }
-        [JsonPropertyName("BackendResolver_Country")]
+        [JsonPropertyName("backend_resolver_country")]
         public string? country_arecord { get; set; }
-        [JsonPropertyName("BackendResolver_ASN")]
+        [JsonPropertyName("backend_resolver_asn")]
         public int? asn_arecord { get; set; }
         public string? prefix_arecord { get; set; }
-        [JsonPropertyName("BackendResolver_Org")]
+        [JsonPropertyName("backend_resolver_org")]
         public string? org_arecord { get; set; }
 
 
