@@ -9,7 +9,8 @@ namespace Entities.DTO.Request
 {
     public class GetDnsEntriesRequestDTO
     {
-        public string rid { get; set; } 
+        public string rid { get; set; }
+        public bool latest { get; set; }
         public Pagination pagination { get; set; } = new Pagination();
         public DnsEntryFilterDTO? filter { get; set; }
         public Sort? sort { get; set; }

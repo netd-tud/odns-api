@@ -58,5 +58,44 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
             //return await _businessOdns.GetDnsEntries(request);
         }
 
+        /// <summary>
+        /// Endpoint used to retrieve the latest DNS entries from the ODNS project
+        /// </summary>
+        /// <remarks>
+        /// All the request body parameters are optional.
+        /// 
+        /// You can filter by providing the filter object and the search condition per property.
+        /// 
+        /// Sample request:
+        /// 
+        ///     {
+        ///        "pagination": {
+        ///          "page": 1,
+        ///          "per_page": 10
+        ///        },
+        ///        "filter": {
+        ///          "protocol": "tcp",
+        ///          "backend_resolver_country": "USA"
+        ///        },
+        ///          "sort": {
+        ///            "field": "timestamp_request",
+        ///            "order": "desc"
+        ///          }
+        ///     }
+        /// 
+        /// Note: timestamps are of the following format yyyy-MM-dd hh:mm:ss.ms
+        /// </remarks>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [EnableRateLimiting("fixed")]
+        [HttpPost]
+        public async Task<GetDnsEntriesResponse> GetLatestDnsEntries(GetDnsEntriesRequest request)
+        {
+            request.latest = true;
+            GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);
+            return response;
+            //return await _businessOdns.GetDnsEntries(request);
+        }
+
     }
 }

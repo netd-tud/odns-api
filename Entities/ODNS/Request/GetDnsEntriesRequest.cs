@@ -5,12 +5,16 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Entities.ODNS.Request
 {
     public class GetDnsEntriesRequest
     {
+        [SwaggerIgnore]
         public string rid { get; set; } = Guid.NewGuid().ToString();
+        [SwaggerIgnore]
+        public bool latest { get; set; } = false;
         public Pagination? pagination {  get; set; } //= new Pagination();
         public DnsEntryFilter? filter { get; set; }
         public Sort? sort { get; set; }

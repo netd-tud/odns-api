@@ -95,7 +95,8 @@ namespace ODNSRepository.Repository
                     filter = dtoFilter,
                     pagination = request.pagination,
                     sort = request.sort,
-                    rid = request.rid
+                    rid = request.rid,
+                    latest = request.latest
                 };
                 GetDnsEntriesResponseDTO result = await QueryDB<GetDnsEntriesRequestDTO, GetDnsEntriesResponseDTO>(dtoRequest, _config["Database:Functions:GetDnsEntries"]);
                 GetDnsEntriesResponse finalResult = result.GetDisplayResponse();
