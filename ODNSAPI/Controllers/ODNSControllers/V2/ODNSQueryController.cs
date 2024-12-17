@@ -58,5 +58,15 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
             //return await _businessOdns.GetDnsEntries(request);
         }
 
+        [EnableRateLimiting("fixed")]
+        [HttpPost]
+        public async Task<GetDnsEntriesResponse> GetLatestDnsEntries(GetDnsEntriesRequest request)
+        {
+            request.latest = true;
+            GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);
+            return response;
+            //return await _businessOdns.GetDnsEntries(request);
+        }
+
     }
 }
