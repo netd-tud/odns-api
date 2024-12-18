@@ -17,9 +17,10 @@ namespace Entities.DTO.Response
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
             response.metaData = metaData;
             // To-Do later maybe a parallization would be best for big number of elements
-            response.dnsEntries = this.dnsEntries
-                .Select(x => x.GetDisplayResponse())
-                .ToList();
+            response.dnsEntries = this.dnsEntries!= null ?
+                this.dnsEntries.Select(x => x.GetDisplayResponse())
+                .ToList()
+                : new List<DnsEntry>();
             return response;
         }
     }

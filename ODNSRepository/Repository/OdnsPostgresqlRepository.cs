@@ -89,7 +89,7 @@ namespace ODNSRepository.Repository
         {
             try
             {
-                DnsEntryFilterDTO dtoFilter = new DnsEntryFilterDTO(request.filter);
+                DnsEntryFilterDTO? dtoFilter = request.filter!= null ? new DnsEntryFilterDTO(request.filter) : null;
                 GetDnsEntriesRequestDTO dtoRequest = new GetDnsEntriesRequestDTO()
                 {
                     filter = dtoFilter,
