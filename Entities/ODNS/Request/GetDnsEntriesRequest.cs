@@ -36,7 +36,7 @@ namespace Entities.ODNS.Request
                         this.sort.field = field.Name;
                         break;
                     }
-                    Console.WriteLine($"Field: {field.Name}, Attribute Description: {attribute.Name}");
+                    //Console.WriteLine($"Field: {field.Name}, Attribute Description: {attribute.Name}");
                 }
             }
         }
