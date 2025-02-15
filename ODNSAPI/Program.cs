@@ -106,7 +106,8 @@ try
     #endregion
 
     
-
+    var connectionString = builder.Configuration.GetConnectionString("Database");
+    Console.WriteLine($"Database ConnectionString: {connectionString}");
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
