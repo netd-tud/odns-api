@@ -8,9 +8,18 @@ using Entities.Enums;
 
 namespace Entities.ODNS.Request
 {
+    /// <summary>
+    /// DnsEntryFilter used to filter the dns records
+    /// </summary>
     public class DnsEntryFilter
     {
+        /// <summary>
+        /// Protocol could be TCP or UDP
+        /// </summary>
         public EProtocol? protocol {  get; set; }
+        /// <summary>
+        /// queried_ip represents the requested ip
+        /// </summary>
         [JsonPropertyName("queried_ip")]
         public string? ip_request { get; set; }
         [JsonPropertyName("replying_ip")]
