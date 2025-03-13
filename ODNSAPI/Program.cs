@@ -3,7 +3,11 @@ using System.Net;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using HealthChecks.UI.Client;
+using HealthCheckUtils;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using NLog.Web;
 using ODNSAPI.Swagger;
@@ -105,7 +109,29 @@ try
     builder.Host.UseNLog();
     #endregion
 
+    #region healthcheck
+    builder.Services.AddHealthChecks()
+        .AddNpgSql(
+            builder.Configuration.GetSection("Database:ConnectionString").Value, 
+            healthQuery: "select 1", 
+            name: "PostgresSql", 
+            failureStatus: HealthStatus.Unhealthy, 
+            tags: new[] { "Feedback", "Database" },
+            timeout:TimeSpan.FromSeconds(Int32.Parse(builder.Configuration.GetSection("HealthCheck:DatabaseTimeoutInSeconds").Value))
+        )
+        .AddCheck("API", () => HealthCheckResult.Healthy("API is running"), tags: new[] { "ready" })
+        .AddCheck<MemoryHealthChecker>("Feedback Service Memory Check", failureStatus: HealthStatus.Unhealthy, tags: new[] { "Feedback Service" });
     
+    builder.Services.AddHealthChecksUI(opt =>
+    {
+        opt.SetEvaluationTimeInSeconds(Int32.Parse(builder.Configuration.GetSection("HealthCheck:EvaluationTimeInSeconds").Value));//time in seconds between check    
+        opt.MaximumHistoryEntriesPerEndpoint(Int32.Parse(builder.Configuration.GetSection("HealthCheck:MaximumHistoryEntriesPerEndpoint").Value)); //maximum history of checks    
+        opt.SetApiMaxActiveRequests(Int32.Parse(builder.Configuration.GetSection("HealthCheck:ApiMaxActiveRequests").Value)); //api requests concurrency
+        opt.AddHealthCheckEndpoint("ODNS API", "/api/health"); //map health check api
+    })
+        .AddInMemoryStorage();
+    #endregion
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -138,6 +164,14 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+    app.MapHealthChecks("/api/health",new HealthCheckOptions()
+    {
+        Predicate= _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+    app.UseHealthChecksUI(config => {
+        config.UIPath = "/health-ui";
+    });
     app.Run();
 }
 catch(Exception ex)
