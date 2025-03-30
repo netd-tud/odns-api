@@ -30,7 +30,7 @@ namespace Entities.DTO.Response
         public int? asn_arecord { get; set; }
         public string? prefix_arecord { get; set; }
         public string? org_arecord { get; set; }
-
+        public string? scan_date { get; set; }
         public DnsEntry GetDisplayResponse()
         {
             DnsEntry parent = new DnsEntry();
@@ -55,7 +55,7 @@ namespace Entities.DTO.Response
             parent.asn_arecord = this.asn_arecord;
             parent.prefix_arecord = this.prefix_arecord;
             parent.org_arecord = this.org_arecord;
-
+            parent.scan_date = this.scan_date;
 
 
             return parent;

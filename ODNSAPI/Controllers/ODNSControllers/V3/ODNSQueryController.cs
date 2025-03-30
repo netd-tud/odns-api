@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ODNSBusiness;
 
-namespace ODNSAPI.Controllers.ODNSControllers.V2
+namespace ODNSAPI.Controllers.ODNSControllers.V3
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
     //[Route("[controller]/[action]")]
-    [ApiVersion(1.1, Deprecated = true)]
+    [ApiVersion(3.0)]
     public class ODNSQueryController : ControllerBase
     {
         private readonly ILogger<ODNSQueryController> _logger;
@@ -87,15 +87,15 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
         /// </remarks>
         /// <param name="request"></param>
         /// <returns></returns>
-        [EnableRateLimiting("fixed")]
-        [HttpPost]
-        public async Task<GetDnsEntriesResponse> GetLatestDnsEntries(GetDnsEntriesRequest request)
-        {
-            request.latest = true;
-            GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);
-            return response;
-            //return await _businessOdns.GetDnsEntries(request);
-        }
+        //[EnableRateLimiting("fixed")]
+        //[HttpPost]
+        //public async Task<GetDnsEntriesResponse> GetLatestDnsEntries(GetDnsEntriesRequest request)
+        //{
+        //    request.latest = true;
+        //    GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);
+        //    return response;
+        //    //return await _businessOdns.GetDnsEntries(request);
+        //}
 
     }
 }

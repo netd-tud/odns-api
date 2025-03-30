@@ -10,7 +10,7 @@ namespace ODNSAPI.Controllers.ODNSControllers.V1
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
     //[Route("[controller]/[action]")]
-    [ApiVersion(1.0,Deprecated =false)]
+    [ApiVersion(1.0,Deprecated =true)]
     public class ODNSQueryController : ControllerBase
     {
         private readonly ILogger<ODNSQueryController> _logger;
