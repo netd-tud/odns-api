@@ -15,6 +15,7 @@ using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Entities.ODNS.Request;
 
 try
 {
@@ -81,11 +82,12 @@ try
         c.OperationFilter<SwaggerDefaultValues>();
         c.EnableAnnotations();
         c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+        c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(DnsEntryFilter).Assembly.GetName().Name}.xml"));
     });
 
     builder.Services.AddApiVersioning(options =>
     {
-        options.DefaultApiVersion = new ApiVersion(1,0);
+        options.DefaultApiVersion = new ApiVersion(3,0);
         options.AssumeDefaultVersionWhenUnspecified = true;
         options.ReportApiVersions = true;
         options.ApiVersionReader = new UrlSegmentApiVersionReader();
