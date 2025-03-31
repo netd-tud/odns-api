@@ -124,6 +124,9 @@ namespace Entities.ODNS.Response
         /// </summary>
         [JsonPropertyName("backend_resolver_org")]
         public string? org_arecord { get; set; }
+        /// <summary>
+        /// Date of the latest scan in the database.
+        /// </summary>
         public string? scan_date { get; set; }
 
     }
