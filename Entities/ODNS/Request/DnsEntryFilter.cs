@@ -9,7 +9,7 @@ using Entities.Enums;
 namespace Entities.ODNS.Request
 {
     /// <summary>
-    /// DnsEntryFilter used to filter the dns records
+    /// DnsEntryFilter used to filter the DNS records
     /// </summary>
     public class DnsEntryFilter
     {

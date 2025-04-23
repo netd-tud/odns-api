@@ -16,6 +16,7 @@ using ODNSRepository;
 using ODNSRepository.Repository;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Entities.ODNS.Request;
+using Microsoft.Extensions.FileProviders;
 
 try
 {
@@ -139,6 +140,12 @@ try
     // Configure the HTTP request pipeline.
     if (enableSwagger)
     {
+        //app.UseStaticFiles(new StaticFileOptions()
+        //{
+        //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+        //    RequestPath = "/Content"
+        //});
+
         //string apiVersion = builder.Configuration.GetValue<string>("Settings:DocsVersion");
         app.UseSwagger();
         //app.UseSwaggerUI();
@@ -154,6 +161,8 @@ try
                 c.SwaggerEndpoint(url, name);
                 c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
             }
+            //c.InjectStylesheet("/Content/swagger-custom.css");
+            c.HeadContent = builder.Configuration.GetValue<string>("Settings:DocsSwaggerOptions:SwaggerHeaderCss");
             //c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"ODNSAPI {apiVersion}");
             //c.RoutePrefix = builder.Configuration.GetValue<string>("Settings:DocsEndpoint");
         });
