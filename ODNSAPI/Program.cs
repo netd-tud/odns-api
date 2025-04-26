@@ -125,14 +125,14 @@ try
         .AddCheck("API", () => HealthCheckResult.Healthy("API is running"), tags: new[] { "ready" })
         .AddCheck<MemoryHealthChecker>("Feedback Service Memory Check", failureStatus: HealthStatus.Unhealthy, tags: new[] { "Feedback Service" });
     
-    builder.Services.AddHealthChecksUI(opt =>
-    {
-        opt.SetEvaluationTimeInSeconds(Int32.Parse(builder.Configuration.GetSection("HealthCheck:EvaluationTimeInSeconds").Value));//time in seconds between check    
-        opt.MaximumHistoryEntriesPerEndpoint(Int32.Parse(builder.Configuration.GetSection("HealthCheck:MaximumHistoryEntriesPerEndpoint").Value)); //maximum history of checks    
-        opt.SetApiMaxActiveRequests(Int32.Parse(builder.Configuration.GetSection("HealthCheck:ApiMaxActiveRequests").Value)); //api requests concurrency
-        opt.AddHealthCheckEndpoint("ODNS API", "/api/health"); //map health check api
-    })
-        .AddInMemoryStorage();
+    //builder.Services.AddHealthChecksUI(opt =>
+    //{
+    //    opt.SetEvaluationTimeInSeconds(Int32.Parse(builder.Configuration.GetSection("HealthCheck:EvaluationTimeInSeconds").Value));//time in seconds between check    
+    //    opt.MaximumHistoryEntriesPerEndpoint(Int32.Parse(builder.Configuration.GetSection("HealthCheck:MaximumHistoryEntriesPerEndpoint").Value)); //maximum history of checks    
+    //    opt.SetApiMaxActiveRequests(Int32.Parse(builder.Configuration.GetSection("HealthCheck:ApiMaxActiveRequests").Value)); //api requests concurrency
+    //    opt.AddHealthCheckEndpoint("ODNS API", "/api/health"); //map health check api
+    //})
+    //    .AddInMemoryStorage();
     #endregion
 
     var app = builder.Build();
@@ -180,9 +180,9 @@ try
         Predicate= _ => true,
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
-    app.UseHealthChecksUI(config => {
-        config.UIPath = "/health-ui";
-    });
+    //app.UseHealthChecksUI(config => {
+    //    config.UIPath = "/api/health-ui";
+    //});
     app.Run();
 }
 catch(Exception ex)
