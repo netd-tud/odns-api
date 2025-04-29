@@ -54,6 +54,8 @@
                 //License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             };
 
+            text.Append($"<br/>{this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:HomepageHtml")}");
+
             if (description.IsDeprecated)
             {
                 text.Append("<br/> This API version has been deprecated.");
