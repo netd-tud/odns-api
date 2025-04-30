@@ -106,7 +106,7 @@
                 }
             }
 
-            text.Append("<h4>Additional Information</h4>");
+            //text.Append("<h4>Additional Information</h4>");
             info.Description = text.ToString();
 
             return info;
