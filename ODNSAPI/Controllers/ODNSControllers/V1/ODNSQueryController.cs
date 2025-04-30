@@ -24,7 +24,7 @@ namespace ODNSAPI.Controllers.ODNSControllers.V1
         /// Endpoint used to retrieve the DNS entries from the ODNS project
         /// </summary>
         /// <remarks>
-        /// All the request body parameters are optional.
+        /// All the request body parameters are optional except for pagination.
         /// 
         /// You can filter by providing the filter object and the search condition per property.
         /// 

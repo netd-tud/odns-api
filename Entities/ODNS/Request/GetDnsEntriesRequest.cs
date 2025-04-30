@@ -15,7 +15,7 @@ namespace Entities.ODNS.Request
         public string rid { get; set; } = Guid.NewGuid().ToString();
         [SwaggerIgnore]
         public bool latest { get; set; } = false;
-        public Pagination? pagination {  get; set; } //= new Pagination();
+        public Pagination pagination {  get; set; } //= new Pagination();
         public DnsEntryFilter? filter { get; set; }
         public Sort? sort { get; set; }
 
