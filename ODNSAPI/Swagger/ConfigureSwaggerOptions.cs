@@ -46,11 +46,11 @@
             var info = new OpenApiInfo()
             {
                 Title = this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:Title"),
-                Version = description.ApiVersion.ToString(),
-                Contact = new OpenApiContact() { 
-                    Name = this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:ContactName"), 
-                    Email = this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:ContactEmail")
-                }//,
+                Version = description.ApiVersion.ToString()
+                //Contact = new OpenApiContact() { 
+                //    Name = this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:ContactName"), 
+                //    Email = this.configuration.GetValue<string>("Settings:DocsSwaggerOptions:ContactEmail")
+                //}//,
                 //License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             };
 
