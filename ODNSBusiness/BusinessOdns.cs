@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Entities.ODNS;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
+using Metrics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ODNSRepository;
@@ -18,13 +19,13 @@ namespace ODNSBusiness
     {
         private readonly ILogger<BusinessOdns> _logger;
         private readonly IConfiguration _configuration;
-        
+        private IMetricsManager _metricsManager;
         private IOdnsRepository _dnsRepository;
-        public BusinessOdns(ILogger<BusinessOdns> logger, IConfiguration config , IOdnsRepositoryFactory odnsRepositoryFactory)
+        public BusinessOdns(ILogger<BusinessOdns> logger, IConfiguration config , IOdnsRepositoryFactory odnsRepositoryFactory, IMetricsManager metricsManager)
         {
             _configuration = config;
             _logger = logger;
-
+            _metricsManager = metricsManager;
             string dbtype = _configuration["Database:dbtype"];
             _dnsRepository = odnsRepositoryFactory.GetInstance(dbtype);
         }
@@ -35,6 +36,7 @@ namespace ODNSBusiness
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
             try
             {
+                _metricsManager.incrementRequestCounter("GetDnsEntries");
                 request.fixSortField();
                 response = await _dnsRepository.GetDnsEntries(request);
                 _logger.LogDebug($"GetDnsEntries response for rid: {request.rid}\n {JsonSerializer.Serialize(response)}");

@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODNSRepository", "ODNSRepos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheckUtils", "HealthCheckUtils\HealthCheckUtils.csproj", "{DEF8C0EC-8D15-4523-A586-F727D6F5EB42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metrics", "Metrics\Metrics.csproj", "{559248A4-8700-45F1-9562-CE82EBC11DF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,8 +47,15 @@ Global
 		{DEF8C0EC-8D15-4523-A586-F727D6F5EB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEF8C0EC-8D15-4523-A586-F727D6F5EB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEF8C0EC-8D15-4523-A586-F727D6F5EB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{559248A4-8700-45F1-9562-CE82EBC11DF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{559248A4-8700-45F1-9562-CE82EBC11DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{559248A4-8700-45F1-9562-CE82EBC11DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{559248A4-8700-45F1-9562-CE82EBC11DF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1CCC777D-7B61-4D1E-B0EF-0D41219F0ABA}
 	EndGlobalSection
 EndGlobal

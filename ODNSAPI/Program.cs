@@ -17,6 +17,8 @@ using ODNSRepository.Repository;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Entities.ODNS.Request;
 using Microsoft.Extensions.FileProviders;
+using OpenTelemetry.Metrics;
+using Metrics;
 
 try
 {
@@ -124,7 +126,7 @@ try
         )
         .AddCheck("API", () => HealthCheckResult.Healthy("API is running"), tags: new[] { "ready" })
         .AddCheck<MemoryHealthChecker>("Feedback Service Memory Check", failureStatus: HealthStatus.Unhealthy, tags: new[] { "Feedback Service" });
-    
+
     //builder.Services.AddHealthChecksUI(opt =>
     //{
     //    opt.SetEvaluationTimeInSeconds(Int32.Parse(builder.Configuration.GetSection("HealthCheck:EvaluationTimeInSeconds").Value));//time in seconds between check    
@@ -133,6 +135,26 @@ try
     //    opt.AddHealthCheckEndpoint("ODNS API", "/api/health"); //map health check api
     //})
     //    .AddInMemoryStorage();
+    #endregion
+
+    #region Metrics
+
+    builder.Services.AddOpenTelemetry()
+        .WithMetrics(metrics =>
+        {
+            metrics.AddAspNetCoreInstrumentation();
+            metrics.AddHttpClientInstrumentation();
+            metrics.AddRuntimeInstrumentation();
+            metrics.AddMeter(builder.Configuration.GetValue<string>("Metrics:MeterName"));
+            metrics.AddOtlpExporter(options =>
+            {
+                options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                options.Endpoint = new Uri(builder.Configuration.GetValue<string>("Metrics:EndpointExporter"));
+                
+            });
+        });
+
+    builder.Services.AddSingleton<IMetricsManager,MetricsManager>();
     #endregion
 
     var app = builder.Build();
