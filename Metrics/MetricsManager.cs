@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Net.Http;
+using System.Net.Http.Json;
+using Metrics.Entities;
+using Microsoft.Extensions.Configuration;
 
 namespace Metrics
 {
@@ -24,15 +27,38 @@ namespace Metrics
             _requestCounterMetric = _customMetrics.CreateCounter<long>(_configuration.GetSection("Metrics:CustomMetrics:RequestCounter").Value);
         }
 
-        public void incrementRequestCounter(string route) 
+        
+        public async Task IncrementRequestCounter(string route,string ip)
         {
             TagList tagsList = new TagList();
+
+            GetIPGeoInfo_Response response = await GetIPGeoInfo(ip);
+
             tagsList.Add("route", route);
-            //tagsList.Add("lat", 52.5200);
-            //tagsList.Add("lon", 13.4050);
-            tagsList.Add("lookup", "DE");
+            tagsList.Add("lookup", response.geo);
+            tagsList.Add("org", response.org);
             _requestCounterMetric.Add(1, tagsList);
         }
 
+        private async Task<GetIPGeoInfo_Response> GetIPGeoInfo(string ip)
+        {
+            GetIPGeoInfo_Response result = new GetIPGeoInfo_Response();
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.Timeout = TimeSpan.FromSeconds(15);
+                HttpResponseMessage response = await client.PostAsJsonAsync(_configuration.GetSection("Metrics:GeoIPExtractor").Value, new GetIPGeoInfo_Request() { ip = ip });
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadFromJsonAsync<GetIPGeoInfo_Response>();
+                }
+            }
+            catch (Exception ex) 
+            {
+                //?
+            }
+            
+            return result;
+        }
     }
 }

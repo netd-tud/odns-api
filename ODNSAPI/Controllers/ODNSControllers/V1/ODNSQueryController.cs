@@ -53,7 +53,12 @@ namespace ODNSAPI.Controllers.ODNSControllers.V1
         [HttpPost]
         public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
         {
-            GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request);
+            string forwardedForIp = Request.Headers.ContainsKey("X-Forwarded-For")? Request.Headers["X-Forwarded-For"].ToString() : Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            
+            //List<string> forwardedForIps = new List<string> { "54.93.128.255" , "13.36.21.255", "3.212.50.255" };
+            //forwardedForIp = forwardedForIps[new Random().Next(forwardedForIps.Count)];
+            
+            GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request, forwardedForIp);
             return response;
             //return await _businessOdns.GetDnsEntries(request);
         }

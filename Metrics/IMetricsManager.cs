@@ -8,6 +8,6 @@ namespace Metrics
 {
     public interface IMetricsManager
     {
-        void incrementRequestCounter(string route);
+        Task IncrementRequestCounter(string route, string ip);
     }
 }
