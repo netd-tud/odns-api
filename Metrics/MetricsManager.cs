@@ -33,14 +33,21 @@ namespace Metrics
         
         public async Task IncrementRequestCounter(string route,string ip)
         {
-            TagList tagsList = new TagList();
+            try
+            {
+                TagList tagsList = new TagList();
 
-            GetIPGeoInfo_Response response = await GetIPGeoInfo(ip);
+                GetIPGeoInfo_Response response = await GetIPGeoInfo(ip);
 
-            tagsList.Add("route", route);
-            tagsList.Add("lookup", response.geo);
-            tagsList.Add("org", response.org);
-            _requestCounterMetric.Add(1, tagsList);
+                tagsList.Add("route", route);
+                tagsList.Add("lookup", response.geo);
+                tagsList.Add("org", response.org);
+                _requestCounterMetric.Add(1, tagsList);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError($"Error occured in {nameof(this.IncrementRequestCounter)} with exception: \n{ex.ToString()}");
+            }
         }
 
         private async Task<GetIPGeoInfo_Response> GetIPGeoInfo(string ip)
