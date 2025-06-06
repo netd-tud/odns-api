@@ -8,14 +8,14 @@ namespace Metrics.Entities
 {
     public class GetIPGeoInfo_Response
     {
-        public string? geo {  get; set; }
-        public string? org { get; set; }
-        public int? asn { get; set; }
-        public string? prefix {  get; set; }
+        public string? geo { get; set; } = "None";
+        public string? org { get; set; } = "None";
+        public int? asn { get; set; } = -1;
+        public string? prefix {  get; set; } = "None";
     }
 
     public class GetIPGeoInfo_Request
     {
-        public string ip { get; set; }
+        public string? ip { get; set; }
     }
 }

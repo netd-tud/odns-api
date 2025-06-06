@@ -5,19 +5,22 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using Metrics.Entities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Metrics
 {
     public class MetricsManager:IMetricsManager
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
         private Meter _customMetrics;
 
         private Counter<long> _requestCounterMetric;
 
-        public MetricsManager(IConfiguration config) 
+        public MetricsManager(IConfiguration config,ILogger logger) 
         {
             _configuration = config;
+            _logger = logger;
             _customMetrics = new Meter(_configuration.GetSection("Metrics:MeterName").Value, _configuration.GetSection("Metrics:MeterVersion").Value);
             initializeMetrics();
         }
@@ -56,6 +59,7 @@ namespace Metrics
             catch (Exception ex) 
             {
                 //?
+                _logger.LogError($"Error occured in {nameof(this.GetIPGeoInfo)} with exception: \n{ex.ToString()}");
             }
             
             return result;
