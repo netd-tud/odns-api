@@ -12,12 +12,12 @@ namespace Metrics
     public class MetricsManager:IMetricsManager
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
+        private readonly ILogger<MetricsManager> _logger;
         private Meter _customMetrics;
 
         private Counter<long> _requestCounterMetric;
 
-        public MetricsManager(IConfiguration config,ILogger logger) 
+        public MetricsManager(IConfiguration config,ILogger<MetricsManager> logger) 
         {
             _configuration = config;
             _logger = logger;
