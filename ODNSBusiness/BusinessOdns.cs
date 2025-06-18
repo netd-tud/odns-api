@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Entities.ODNS;
 using Entities.ODNS.Request;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ODNSRepository;
 using ODNSRepository.Repository;
+using System.Reflection;
 
 namespace ODNSBusiness
 {
@@ -30,7 +33,7 @@ namespace ODNSBusiness
             _dnsRepository = odnsRepositoryFactory.GetInstance(dbtype);
         }
 
-        public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request, string forwardedForIp)
+        public async Task<GetDnsEntriesResponse> GetDnsEntries(IGetDnsEntriesRequest request, string forwardedForIp)
         {
             _logger.LogInformation($"GetDnsEntries called rid: {request.rid} with the following request:\n {JsonSerializer.Serialize(request)}");
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
@@ -39,6 +42,18 @@ namespace ODNSBusiness
                 _metricsManager.IncrementRequestCounter("GetDnsEntries", forwardedForIp);
                 request.fixSortField();
                 response = await _dnsRepository.GetDnsEntries(request);
+
+                if(request is GetDnsEntriesRequestV2 requestV2)
+                {
+                    if (requestV2.fieldsToReturn.Count > 0)
+                    {
+                        foreach (var dnsEntry in response.dnsEntries)
+                        {
+                            KeepOnlySpecifiedFields(dnsEntry, requestV2.fieldsToReturn);
+                        }
+                    }
+                    
+                }
                 _logger.LogDebug($"GetDnsEntries response for rid: {request.rid}\n {JsonSerializer.Serialize(response)}");
             }
             catch (Exception ex) 
@@ -49,5 +64,28 @@ namespace ODNSBusiness
             }
             return response;
         }
+
+
+        public static void KeepOnlySpecifiedFields<T>(T obj, List<string> fieldsToKeep)
+        {
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var prop in props)
+            {
+                if (!prop.CanWrite)
+                    continue;
+
+                // Get the JsonPropertyName if set
+                var jsonAttr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
+                var jsonName = jsonAttr?.Name ?? prop.Name;
+
+                // If it's NOT in the keep list, set it to null
+                if (!fieldsToKeep.Contains(jsonName, StringComparer.OrdinalIgnoreCase))
+                {
+                    prop.SetValue(obj, null);
+                }
+            }
+        }
+
     }
 }

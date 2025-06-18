@@ -85,7 +85,7 @@ namespace ODNSRepository.Repository
             }
         }
 
-        public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
+        public async Task<GetDnsEntriesResponse> GetDnsEntries(IGetDnsEntriesRequest request)
         {
             try
             {

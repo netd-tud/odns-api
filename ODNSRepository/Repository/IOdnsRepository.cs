@@ -10,6 +10,6 @@ namespace ODNSRepository.Repository
 {
     public interface IOdnsRepository
     {
-        Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request);
+        Task<GetDnsEntriesResponse> GetDnsEntries(IGetDnsEntriesRequest request);
     }
 }

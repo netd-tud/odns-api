@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ODNSBusiness;
 
-namespace ODNSAPI.Controllers.ODNSControllers.V1
+namespace ODNSAPI.Controllers.ODNSControllers.V2
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
     //[Route("[controller]/[action]")]
-    [ApiVersion(1.0,Deprecated = true)]
+    [ApiVersion(2.0)]
     public class ODNSQueryController : ControllerBase
     {
         private readonly ILogger<ODNSQueryController> _logger;
@@ -51,7 +51,7 @@ namespace ODNSAPI.Controllers.ODNSControllers.V1
         /// <returns></returns>
         [EnableRateLimiting("fixed")]
         [HttpPost]
-        public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request)
+        public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequestV2 request)
         {
             string forwardedForIp = Request.Headers.ContainsKey("X-Forwarded-For")? Request.Headers["X-Forwarded-For"].ToString() : Request.HttpContext.Connection.RemoteIpAddress.ToString();
             

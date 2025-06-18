@@ -10,6 +10,6 @@ namespace ODNSBusiness
 {
     public interface IBusinessOdns
     {
-        Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequest request,string forwardedForIp);
+        Task<GetDnsEntriesResponse> GetDnsEntries(IGetDnsEntriesRequest request,string forwardedForIp);
     }
 }

@@ -1,24 +1,26 @@
 
 using System.Net;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using Entities.ODNS.Request;
 using HealthChecks.UI.Client;
 using HealthCheckUtils;
+using Metrics;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using NLog.Web;
 using ODNSAPI.Swagger;
 using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Entities.ODNS.Request;
-using Microsoft.Extensions.FileProviders;
 using OpenTelemetry.Metrics;
-using Metrics;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 try
 {
@@ -66,7 +68,11 @@ try
 
     // Add services to the container.
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        });
 
     if (Environment.OSVersion.Platform == PlatformID.Unix)
     {
@@ -90,7 +96,7 @@ try
 
     builder.Services.AddApiVersioning(options =>
     {
-        options.DefaultApiVersion = new ApiVersion(1,0);
+        options.DefaultApiVersion = new ApiVersion(2,0);
         options.AssumeDefaultVersionWhenUnspecified = true;
         options.ReportApiVersions = true;
         options.ApiVersionReader = new UrlSegmentApiVersionReader();
@@ -174,6 +180,10 @@ try
         app.UseSwaggerUI(c =>
         {
             var descriptions = app.DescribeApiVersions();
+            // added this so that latest version is shown when swagger is opened
+            descriptions = descriptions
+            .OrderByDescending(d => d.ApiVersion) // v2 first, then v1, etc.
+            .ToList();
 
             // build a swagger endpoint for each discovered API version
             foreach (var description in descriptions)
