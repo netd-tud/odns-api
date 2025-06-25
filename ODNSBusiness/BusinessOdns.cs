@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CustomExceptions;
 using Entities.ODNS;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
@@ -14,10 +17,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ODNSRepository;
 using ODNSRepository.Repository;
-using System.Reflection;
+using Utilities;
 
 namespace ODNSBusiness
 {
+    
     public class BusinessOdns : IBusinessOdns
     {
         private readonly ILogger<BusinessOdns> _logger;
@@ -37,24 +41,52 @@ namespace ODNSBusiness
         {
             _logger.LogInformation($"GetDnsEntries called rid: {request.rid} with the following request:\n {JsonSerializer.Serialize(request)}");
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
+            GetDnsEntriesRequestV2? r2 = null;
             try
             {
-                _metricsManager.IncrementRequestCounter("GetDnsEntries", forwardedForIp);
                 request.fixSortField();
+                if (request is GetDnsEntriesRequestV2 requestV2)
+                {
+                    r2 = requestV2;
+                    CheckFieldsToKeep(typeof(DnsEntry), requestV2.fieldsToReturn);
+                }
+                _metricsManager.IncrementRequestCounter("GetDnsEntries", forwardedForIp);
+
                 response = await _dnsRepository.GetDnsEntries(request);
 
-                if(request is GetDnsEntriesRequestV2 requestV2)
+                if(r2 != null)
                 {
-                    if (requestV2.fieldsToReturn.Count > 0)
+                    
+                    if (r2.fieldsToReturn.Count > 0)
                     {
                         foreach (var dnsEntry in response.dnsEntries)
                         {
-                            KeepOnlySpecifiedFields(dnsEntry, requestV2.fieldsToReturn);
+                            KeepOnlySpecifiedFields(dnsEntry, r2.fieldsToReturn);
                         }
                     }
                     
                 }
                 _logger.LogDebug($"GetDnsEntries response for rid: {request.rid}\n {JsonSerializer.Serialize(response)}");
+            }
+            catch(AmbiguousSortFieldException ex)
+            {
+                response.statusCode.code = -1;
+                response.statusCode.message = ex.Message;
+                _logger.LogError($"Error occured in {nameof(this.GetDnsEntries)} with exception: {ex.ToString()}");
+            }
+            catch(AggregateException aex)
+            {
+                response.statusCode.code = -1;
+                response.statusCode.message = "";
+                foreach (var  ex in aex.InnerExceptions)
+                {
+                    if( ex is AmbiguousSortFieldException fex)
+                    {
+                        response.statusCode.message += $"{fex.Message} " ;
+                    }
+                }
+                _logger.LogError($"Error occured in {nameof(this.GetDnsEntries)} with exception: {aex.ToString()}");
+
             }
             catch (Exception ex) 
             {
@@ -65,6 +97,91 @@ namespace ODNSBusiness
             return response;
         }
 
+        private class PropertyMetadata
+        {
+            public string PropertyName { get; set; }
+            public string JsonName { get; set; }
+        }
+
+        public void CheckFieldsToKeep(Type type, List<string>? fieldsToKeep)
+        {
+            if (fieldsToKeep == null && !fieldsToKeep.Any())
+                return;
+            
+            List<PropertyMetadata> properties = type
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Select(p => new PropertyMetadata
+            {
+                PropertyName = p.Name,
+                JsonName = p.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
+            })
+            .ToList();
+
+            List<AmbiguousSortFieldException> exceptions = new List<AmbiguousSortFieldException>();
+
+            foreach(string fieldToKeep in fieldsToKeep)
+            {
+                try
+                {
+                    ValidateSingleField(fieldToKeep, properties);
+                }
+                catch (AmbiguousSortFieldException ex) 
+                {
+                    exceptions.Add(ex);
+                }
+            }
+            if (exceptions.Any())
+                throw new AggregateException(exceptions);
+        }
+        private void ValidateSingleField(string field, List<PropertyMetadata> properties)
+        {
+            var originalField = field;
+
+            // 1. Exact Match
+            foreach (var prop in properties)
+            {
+                if (string.Equals(prop.JsonName ?? prop.PropertyName, originalField, StringComparison.OrdinalIgnoreCase))
+                {
+                    field = prop.JsonName ?? prop.PropertyName; // Correct to canonical name
+                    return; // Success
+                }
+            }
+
+            // 2. Fuzzy Match
+            string bestMatch = string.Empty;
+            int minDistance = int.MaxValue;
+            const int similarityThreshold = 2;
+            FuzzyMatching fm = new FuzzyMatching(FuzzyMatchingAlgo.LEVENSHTEIN);
+            foreach (var prop in properties)
+            {
+                int distanceProp = fm.FuzzyMatch(originalField, prop.JsonName ?? prop.PropertyName);
+                if (distanceProp < minDistance)
+                {
+                    minDistance = distanceProp;
+                    bestMatch = prop.JsonName ?? prop.PropertyName;
+                }
+
+                //if (prop.JsonName != null)
+                //{
+                //    int distanceJson = fm.FuzzyMatch(originalField, prop.JsonName);
+                //    if (distanceJson < minDistance)
+                //    {
+                //        minDistance = distanceJson;
+                //        bestMatch = prop.PropertyName;
+                //    }
+                //}
+            }
+
+            // 3. Evaluate and throw
+            if (!string.IsNullOrEmpty(bestMatch) && minDistance <= similarityThreshold)
+            {
+                throw new AmbiguousSortFieldException(originalField, bestMatch);
+            }
+            else
+            {
+                throw new AmbiguousSortFieldException(originalField);
+            }
+        }
 
         public static void KeepOnlySpecifiedFields<T>(T obj, List<string> fieldsToKeep)
         {

@@ -17,4 +17,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CustomExceptions\CustomExceptions.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+  </ItemGroup>
+
 </Project>

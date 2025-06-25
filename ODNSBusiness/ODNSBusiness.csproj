@@ -13,9 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CustomExceptions\CustomExceptions.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
     <ProjectReference Include="..\Metrics\Metrics.csproj" />
     <ProjectReference Include="..\ODNSRepository\ODNSRepository.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>
