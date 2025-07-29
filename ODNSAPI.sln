@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomExceptions", "CustomExceptions\CustomExceptions.csproj", "{52796F70-1B71-4882-A749-F607F80526EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthUtils", "AuthUtils\AuthUtils.csproj", "{EC589FF9-7698-48C3-8A8A-0DA4B38AFF20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{52796F70-1B71-4882-A749-F607F80526EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52796F70-1B71-4882-A749-F607F80526EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52796F70-1B71-4882-A749-F607F80526EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC589FF9-7698-48C3-8A8A-0DA4B38AFF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC589FF9-7698-48C3-8A8A-0DA4B38AFF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC589FF9-7698-48C3-8A8A-0DA4B38AFF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC589FF9-7698-48C3-8A8A-0DA4B38AFF20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using NLog.Web;
 using ODNSAPI.Swagger;
 using ODNSBusiness;
@@ -90,6 +91,29 @@ try
     {
         c.OperationFilter<SwaggerDefaultValues>();
         c.EnableAnnotations();
+        c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "X-API-KEY",
+            Type = SecuritySchemeType.ApiKey,
+            Description = "API Key required to access this endpoint"
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    }
+                },
+                new List<string>()
+            }
+        });
+
         c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
         c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(DnsEntryFilter).Assembly.GetName().Name}.xml"));
     });

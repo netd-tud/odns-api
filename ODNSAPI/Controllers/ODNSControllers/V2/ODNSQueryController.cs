@@ -1,4 +1,6 @@
 ﻿using Asp.Versioning;
+using AuthUtils;
+using Entities.Auth;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +53,7 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
         /// <returns></returns>
         [EnableRateLimiting("fixed")]
         [HttpPost]
+        [ApiKeyAuth]
         public async Task<GetDnsEntriesResponse> GetDnsEntries(GetDnsEntriesRequestV2 request)
         {
             string forwardedForIp = Request.Headers.ContainsKey("X-Forwarded-For")? Request.Headers["X-Forwarded-For"].ToString() : Request.HttpContext.Connection.RemoteIpAddress.ToString();
@@ -61,6 +64,14 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
             GetDnsEntriesResponse response = await _businessOdns.GetDnsEntries(request, forwardedForIp);
             return response;
             //return await _businessOdns.GetDnsEntries(request);
+        }
+
+        [EnableRateLimiting("fixed")]
+        [HttpPost]
+        public async Task<StatusCode> RequestApiKey(ApiKeyRecordIn request)
+        {
+            StatusCode response = await _businessOdns.RequestApiKey(request);
+            return response;
         }
 
         /// <summary>
