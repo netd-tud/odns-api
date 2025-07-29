@@ -12,6 +12,7 @@ using CustomExceptions;
 using Entities.ODNS;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
+using Entities.Auth;
 using Metrics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -204,5 +205,23 @@ namespace ODNSBusiness
             }
         }
 
+        public async Task<StatusCode> RequestApiKey(ApiKeyRecordIn apiInfo)
+        {
+            StatusCode response = new StatusCode();
+            try
+            {
+                ApiKeyRecord result = await _dnsRepository.InsertApiKeyRecord(apiInfo);
+                if (result != null && result.api_key != null) 
+                {
+                    response.statusCode.message = "You will receive the api key by email shortly";
+                }
+            }
+            catch (Exception ex) 
+            {
+                response.statusCode.code = 1;
+                response.statusCode.message = "Error please try again later";
+            }
+            return response;
+        }
     }
 }

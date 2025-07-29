@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthUtils\AuthUtils.csproj" />
     <ProjectReference Include="..\HealthCheckUtils\HealthCheckUtils.csproj" />
     <ProjectReference Include="..\Metrics\Metrics.csproj" />
     <ProjectReference Include="..\ODNSBusiness\ODNSBusiness.csproj" />

@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Entities.Auth;
 using Entities.DTO.Request;
 using Entities.DTO.Response;
 using Entities.ODNS.Request;
@@ -107,5 +108,33 @@ namespace ODNSRepository.Repository
                 throw;
             }
         }
+
+
+        public async Task<ApiKeyRecord> GetApiKeyRecord(ApiKeyDTO apiKey)
+        {
+            try
+            {
+                ApiKeyRecord result = await QueryDB<ApiKeyDTO, ApiKeyRecord>(apiKey, _config["Database:Functions:GetApiKeyInfo"]);
+                return result;
+            }
+            catch (Exception ex) 
+            {
+                throw;
+            }
+        }
+
+        public async Task<ApiKeyRecord> InsertApiKeyRecord(ApiKeyRecordIn data)
+        {
+            try
+            {
+                ApiKeyRecord result = await QueryDB<ApiKeyRecordIn, ApiKeyRecord>(data, _config["Database:Functions:InsertApiKey"]);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }
