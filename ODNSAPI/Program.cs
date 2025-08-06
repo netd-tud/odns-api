@@ -28,6 +28,20 @@ try
     var builder = WebApplication.CreateBuilder(args);
     bool enableSwagger = builder.Configuration.GetValue<bool>("Settings:EnableSwagger");
 
+    #region CORS
+    // Add CORS policy
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy
+                .AllowAnyOrigin()    // or .WithOrigins("http://localhost:3000") for specific origins
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+    });
+    #endregion
+
     #region RateLimiting
     builder.Services.AddRateLimiter(o =>
     {
@@ -229,6 +243,7 @@ try
     app.UseRouting();
     app.UseRateLimiter();
     app.UseAuthorization();
+    app.UseCors("AllowAll");
 
     app.MapControllers();
     app.MapHealthChecks("/api/health",new HealthCheckOptions()

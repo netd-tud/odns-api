@@ -30,5 +30,10 @@ namespace Entities.Auth
         /// Your organization email
         /// </summary>
         public string email { get; set; }
+
+        /// <summary>
+        /// Your purpose for using th api
+        /// </summary>
+        public string purpose { get; set; }
     }
 }
