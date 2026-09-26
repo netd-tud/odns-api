@@ -40,6 +40,7 @@ namespace ODNSBusiness
 
         public async Task<GetDnsEntriesResponse> GetDnsEntries(IGetDnsEntriesRequest request, string forwardedForIp)
         {
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             _logger.LogInformation($"GetDnsEntries called rid: {request.rid} with the following request:\n {JsonSerializer.Serialize(request)}");
             GetDnsEntriesResponse response = new GetDnsEntriesResponse();
             GetDnsEntriesRequestV2? r2 = null;
@@ -67,7 +68,12 @@ namespace ODNSBusiness
                     }
                     
                 }
-                _logger.LogDebug($"GetDnsEntries response for rid: {request.rid}\n {JsonSerializer.Serialize(response)}");
+                _logger.LogDebug(
+                    "GetDnsEntries returned {EntryCount} entries for rid {RequestId} in {ElapsedMilliseconds} ms",
+                    response.dnsEntries.Count,
+                    request.rid,
+                    stopwatch.ElapsedMilliseconds
+                );
             }
             catch(AmbiguousSortFieldException ex)
             {
@@ -106,7 +112,7 @@ namespace ODNSBusiness
 
         public void CheckFieldsToKeep(Type type, List<string>? fieldsToKeep)
         {
-            if (fieldsToKeep == null && !fieldsToKeep.Any())
+            if (fieldsToKeep == null || !fieldsToKeep.Any())
                 return;
             
             List<PropertyMetadata> properties = type
@@ -120,11 +126,11 @@ namespace ODNSBusiness
 
             List<AmbiguousSortFieldException> exceptions = new List<AmbiguousSortFieldException>();
 
-            foreach(string fieldToKeep in fieldsToKeep)
+            for (int index = 0; index < fieldsToKeep.Count; index++)
             {
                 try
                 {
-                    ValidateSingleField(fieldToKeep, properties);
+                    fieldsToKeep[index] = ValidateSingleField(fieldsToKeep[index], properties);
                 }
                 catch (AmbiguousSortFieldException ex) 
                 {
@@ -134,7 +140,7 @@ namespace ODNSBusiness
             if (exceptions.Any())
                 throw new AggregateException(exceptions);
         }
-        private void ValidateSingleField(string field, List<PropertyMetadata> properties)
+        private string ValidateSingleField(string field, List<PropertyMetadata> properties)
         {
             var originalField = field;
 
@@ -143,9 +149,10 @@ namespace ODNSBusiness
             {
                 if (string.Equals(prop.JsonName ?? prop.PropertyName, originalField, StringComparison.OrdinalIgnoreCase))
                 {
-                    field = prop.JsonName ?? prop.PropertyName; // Correct to canonical name
-                    return; // Success
+                    return prop.JsonName ?? prop.PropertyName;
                 }
+                if (string.Equals(prop.PropertyName, originalField, StringComparison.OrdinalIgnoreCase))
+                    return prop.JsonName ?? prop.PropertyName;
             }
 
             // 2. Fuzzy Match

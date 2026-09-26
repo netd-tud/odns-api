@@ -1,11 +1,15 @@
 ﻿using Asp.Versioning;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using AuthUtils;
 using Entities.Auth;
 using Entities.ODNS.Request;
 using Entities.ODNS.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Net.Http.Headers;
 using ODNSBusiness;
+using ODNSAPI.Downloads;
 
 namespace ODNSAPI.Controllers.ODNSControllers.V2
 {
@@ -17,10 +21,15 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
     {
         private readonly ILogger<ODNSQueryController> _logger;
         private IBusinessOdns _businessOdns;
-        public ODNSQueryController(ILogger<ODNSQueryController> logger, IBusinessOdns businessOdns)
+        private readonly LatestDownloadProvider _downloadProvider;
+        public ODNSQueryController(
+            ILogger<ODNSQueryController> logger,
+            IBusinessOdns businessOdns,
+            LatestDownloadProvider downloadProvider)
         {
             _logger = logger;
             _businessOdns = businessOdns;
+            _downloadProvider = downloadProvider;
         }
         /// <summary>
         /// Endpoint used to retrieve the DNS entries from the ODNS project
@@ -72,6 +81,81 @@ namespace ODNSAPI.Controllers.ODNSControllers.V2
         {
             StatusCode response = await _businessOdns.RequestApiKey(request);
             return response;
+        }
+
+        /// <summary>
+        /// Download the latest complete TCP or UDP scan.
+        /// </summary>
+        /// <param name="protocol">tcp or udp</param>
+        /// <param name="format">csv, csv.zst, or parquet</param>
+        /// <param name="cancellationToken"></param>
+        [EnableRateLimiting("fixed")]
+        [HttpGet]
+        [ApiKeyAuth]
+        [Produces("text/csv", "application/zstd", "application/vnd.apache.parquet")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> DownloadLatest(
+            [FromQuery, Required] string protocol,
+            [FromQuery, Required] string format,
+            CancellationToken cancellationToken)
+        {
+            if (!_downloadProvider.IsSupportedProtocol(protocol))
+                return BadRequest("protocol must be tcp or udp");
+            if (!_downloadProvider.IsSupportedFormat(format))
+                return BadRequest("format must be csv, csv.zst, or parquet");
+
+            try
+            {
+                DownloadFileDescriptor? file = await _downloadProvider.GetLatest(
+                    protocol,
+                    format,
+                    cancellationToken
+                );
+                if (file == null)
+                    return NotFound("No download is available for the requested dataset");
+
+                Response.ContentType = file.ContentType;
+                Response.Headers[HeaderNames.ContentDisposition] =
+                    $"attachment; filename=\"{file.Name}\"";
+                Response.Headers["X-Accel-Redirect"] = _downloadProvider.GetInternalPath(file);
+                return new EmptyResult();
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound("No download has been published yet");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return NotFound("No download has been published yet");
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "The download manifest is invalid");
+                return StatusCode(
+                    StatusCodes.Status503ServiceUnavailable,
+                    "Downloads are temporarily unavailable"
+                );
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "The download manifest could not be read");
+                return StatusCode(
+                    StatusCodes.Status503ServiceUnavailable,
+                    "Downloads are temporarily unavailable"
+                );
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "The download manifest could not be accessed");
+                return StatusCode(
+                    StatusCodes.Status503ServiceUnavailable,
+                    "Downloads are temporarily unavailable"
+                );
+            }
         }
 
         /// <summary>

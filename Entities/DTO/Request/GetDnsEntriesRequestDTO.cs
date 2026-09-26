@@ -14,5 +14,6 @@ namespace Entities.DTO.Request
         public Pagination? pagination { get; set; } = new Pagination();
         public DnsEntryFilterDTO? filter { get; set; }
         public Sort? sort { get; set; }
+        public List<string>? fieldsToReturn { get; set; }
     }
 }

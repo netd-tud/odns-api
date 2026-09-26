@@ -18,6 +18,46 @@ namespace ODNSRepository.Repository
 {
     public class OdnsPostgresqlRepository : IOdnsRepository
     {
+        private static readonly Dictionary<string, string> SelectableFields = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["protocol"] = "protocol",
+            ["queried_ip"] = "ip_request",
+            ["ip_request"] = "ip_request",
+            ["replying_ip"] = "ip_response",
+            ["ip_response"] = "ip_response",
+            ["backend_resolver"] = "a_record",
+            ["a_record"] = "a_record",
+            ["timestamp_request"] = "timestamp_request",
+            ["timestamp_response"] = "timestamp_response",
+            ["resolver_type"] = "response_type",
+            ["response_type"] = "response_type",
+            ["queried_ip_country"] = "country_request",
+            ["country_request"] = "country_request",
+            ["replying_ip_country"] = "country_response",
+            ["country_response"] = "country_response",
+            ["queried_ip_asn"] = "asn_request",
+            ["asn_request"] = "asn_request",
+            ["replying_ip_asn"] = "asn_response",
+            ["asn_response"] = "asn_response",
+            ["queried_ip_prefix"] = "prefix_request",
+            ["prefix_request"] = "prefix_request",
+            ["replying_ip_prefix"] = "prefix_response",
+            ["prefix_response"] = "prefix_response",
+            ["queried_ip_org"] = "org_request",
+            ["org_request"] = "org_request",
+            ["replying_ip_org"] = "org_response",
+            ["org_response"] = "org_response",
+            ["backend_resolver_country"] = "country_arecord",
+            ["country_arecord"] = "country_arecord",
+            ["backend_resolver_asn"] = "asn_arecord",
+            ["asn_arecord"] = "asn_arecord",
+            ["backend_resolver_prefix"] = "prefix_arecord",
+            ["prefix_arecord"] = "prefix_arecord",
+            ["backend_resolver_org"] = "org_arecord",
+            ["org_arecord"] = "org_arecord",
+            ["scan_date"] = "scan_date"
+        };
+
         private readonly IConfiguration _config;
         private ILogger<OdnsPostgresqlRepository> _logger;
 
@@ -97,7 +137,14 @@ namespace ODNSRepository.Repository
                     pagination = request.pagination,
                     sort = request.sort,
                     rid = request.rid,
-                    latest = request.latest
+                    latest = request.latest,
+                    fieldsToReturn = request is GetDnsEntriesRequestV2 requestV2
+                        ? requestV2.fieldsToReturn?
+                            .Where(SelectableFields.ContainsKey)
+                            .Select(field => SelectableFields[field])
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .ToList()
+                        : null
                 };
                 GetDnsEntriesResponseDTO result = await QueryDB<GetDnsEntriesRequestDTO, GetDnsEntriesResponseDTO>(dtoRequest, _config["Database:Functions:GetDnsEntries"]);
                 GetDnsEntriesResponse finalResult = result.GetDisplayResponse();

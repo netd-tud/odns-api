@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
 using ODNSAPI.Swagger;
+using ODNSAPI.Downloads;
 using ODNSBusiness;
 using ODNSRepository;
 using ODNSRepository.Repository;
@@ -149,6 +150,7 @@ try
     builder.Services.AddTransient<IOdnsRepositoryFactory,OdnsRepositoryFactory>();
     builder.Services.AddSingleton<IOdnsRepository,OdnsPostgresqlRepository>();
     builder.Services.AddSingleton<IBusinessOdns, BusinessOdns>();
+    builder.Services.AddSingleton<LatestDownloadProvider>();
     
     #endregion
 
@@ -260,4 +262,3 @@ catch(Exception ex)
 {
     Console.WriteLine(ex.ToString());
 }
-
