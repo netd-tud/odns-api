@@ -9,5 +9,6 @@ namespace Metrics
     public interface IMetricsManager
     {
         Task IncrementRequestCounter(string route, string ip);
+        void IncrementApiKeyRequestCounter(int apiKeyId, string route, string method, string path);
     }
 }

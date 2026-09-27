@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ODNSRepository\ODNSRepository.csproj" />
+    <ProjectReference Include="..\Metrics\Metrics.csproj" />
   </ItemGroup>
 
 </Project>

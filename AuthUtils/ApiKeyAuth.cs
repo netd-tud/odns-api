@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using ODNSRepository;
 using ODNSRepository.Repository;
 using Entities.Auth;
+using Metrics;
 
 namespace AuthUtils
 {
@@ -46,6 +47,20 @@ namespace AuthUtils
                         StatusCode = StatusCodes.Status401Unauthorized
                     };
                     return;
+                }
+
+                if (apiKey.id.HasValue)
+                {
+                    try
+                    {
+                        IMetricsManager metricsManager = services.GetRequiredService<IMetricsManager>();
+                        string route = context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionName) ? actionName ?? "unknown" : "unknown";
+                        metricsManager.IncrementApiKeyRequestCounter(apiKey.id.Value, route, request.Method, request.Path.Value ?? "");
+                    }
+                    catch (Exception metricException)
+                    {
+                        logger.LogError($"Failed to record API key request metric: {metricException}");
+                    }
                 }
             }
             catch (Exception ex) 

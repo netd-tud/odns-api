@@ -16,6 +16,7 @@ namespace Metrics
         private Meter _customMetrics;
 
         private Counter<long> _requestCounterMetric;
+        private Counter<long> _apiKeyRequestCounterMetric;
 
         public MetricsManager(IConfiguration config,ILogger<MetricsManager> logger) 
         {
@@ -28,6 +29,7 @@ namespace Metrics
         private void initializeMetrics()
         {
             _requestCounterMetric = _customMetrics.CreateCounter<long>(_configuration.GetSection("Metrics:CustomMetrics:RequestCounter").Value);
+            _apiKeyRequestCounterMetric = _customMetrics.CreateCounter<long>(_configuration.GetSection("Metrics:CustomMetrics:ApiKeyRequestCounter").Value);
         }
 
         
@@ -47,6 +49,23 @@ namespace Metrics
             catch (Exception ex) 
             {
                 _logger.LogError($"Error occured in {nameof(this.IncrementRequestCounter)} with exception: \n{ex.ToString()}");
+            }
+        }
+
+        public void IncrementApiKeyRequestCounter(int apiKeyId, string route, string method, string path)
+        {
+            try
+            {
+                TagList tagsList = new TagList();
+                tagsList.Add("api_key_id", apiKeyId.ToString());
+                tagsList.Add("route", route);
+                tagsList.Add("method", method);
+                tagsList.Add("path", path);
+                _apiKeyRequestCounterMetric.Add(1, tagsList);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occured in {nameof(this.IncrementApiKeyRequestCounter)} with exception: \n{ex.ToString()}");
             }
         }
 
